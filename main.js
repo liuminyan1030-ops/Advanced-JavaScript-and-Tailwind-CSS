@@ -1,139 +1,127 @@
 "use strict";
-/*
-  Student Name: Minyan Liu
-  Student ID: 000973198
-  Date: September 23, 2026
+/*Student Name: Hoang Yen Nguyen
+  Student ID:000975511
+  Date: September 25th,2026
+
 
   Program: Metric / Imperial Unit Converter
-  Three cards: weight, distance, and temperature.
-  The top row of each card converts one way.
-  The bottom row converts the opposite way.
-  One higher-order function handles a single number or a list.
+  Three tabs (in the navbar): Weight, Distance, Temperature.
+  Each tab has two forms: metric -> imperial, and imperial -> metric.
+  Each form accepts one number, or several numbers separated by commas.
 
-  Inputs: one number or a comma-separated list.
-  Processing: createConverter returns a function that converts one value or an array.
-  Outputs: the converted number or list, with two decimal places.
+
+  Inputs: text typed into a form's input field (one number, or a comma-separated list of numbers).
+  Processing: createConverter(fromUnit, toUnit) is a higher-order function.
+  Outputs: the converted value(s), rounded to 2 decimal places, shown in the form's result box.
 */
-
-// PART 1 — conversion formulas
+// 1.Conversion rules
 const kilogramsToPounds = (kilograms) => kilograms * 2.20462;
 const poundsToKilograms = (pounds) => pounds / 2.20462;
-const kilometresToMiles = (kilometres) => kilometres / 1.609344;
-const milesToKilometres = (miles) => miles * 1.609344;
-const celsiusToFahrenheit = (celsius) => celsius * 1.8 + 32;
-const fahrenheitToCelsius = (fahrenheit) => (fahrenheit - 32) / 1.8;
-// Pick one formula from the two units, then convert one number.
-const convertOneNumber = (fromUnit, toUnit, value) => {
-    if (fromUnit === "kg" && toUnit === "lb") {
-        return kilogramsToPounds(value);
-    }
-    if (fromUnit === "lb" && toUnit === "kg") {
-        return poundsToKilograms(value);
-    }
-    if (fromUnit === "km" && toUnit === "mi") {
-        return kilometresToMiles(value);
-    }
-    if (fromUnit === "mi" && toUnit === "km") {
-        return milesToKilometres(value);
-    }
-    if (fromUnit === "c" && toUnit === "f") {
-        return celsiusToFahrenheit(value);
-    }
-    if (fromUnit === "f" && toUnit === "c") {
-        return fahrenheitToCelsius(value);
-    }
-    return value;
+const kilometresToMiles = (kilometres) => kilometres * 0.621371;
+const milesToKilometres = (miles) => miles / 0.621371;
+const celsiusToFahrenheit = (celsius) => (celsius * 9) / 5 + 32;
+const fahrenheitToCelsius = (fahrenheit) => ((fahrenheit - 32) * 5) / 9;
+// 2.Formula lookup table
+const conversionFormulas = {
+    "kg-lb": kilogramsToPounds,
+    "lb-kg": poundsToKilograms,
+    "km-mi": kilometresToMiles,
+    "mi-km": milesToKilometres,
+    "c-f": celsiusToFahrenheit,
+    "f-c": fahrenheitToCelsius,
 };
-/*
-  PART 2 — higher-order function from the assignment.
-  Two parameters: the unit to convert from, and the unit to convert to.
-  It returns an arrow function.
-  That arrow function accepts one number or an array of numbers.
-*/
-const createConverter = (fromUnit, toUnit) => {
+// 3.createConverter
+function createConverter(fromUnit, toUnit) {
+    const key = `${fromUnit}-${toUnit}`;
+    const formula = conversionFormulas[key];
+    if (!formula) {
+        throw new Error(`No conversion rule for "${fromUnit}" to "${toUnit}".`);
+    }
+    const round = (value) => Math.round(value * 100) / 100;
     return (input) => {
         if (Array.isArray(input)) {
-            return input.map((value) => convertOneNumber(fromUnit, toUnit, value));
+            return input.map((value) => round(formula(value)));
         }
-        return convertOneNumber(fromUnit, toUnit, input);
+        return round(formula(input));
     };
-};
-const parseInput = (text) => {
-    if (text.includes(",") === false) {
-        return Number(text);
+}
+// The six converter functions the site uses, one per direction
+const convertKgToLb = createConverter("kg", "lb");
+const convertLbToKg = createConverter("lb", "kg");
+const convertKmToMi = createConverter("km", "mi");
+const convertMiToKm = createConverter("mi", "km");
+const convertCToF = createConverter("c", "f");
+const convertFToC = createConverter("f", "c");
+// 4.Input/output helpers
+function parseInputValue(rawText) {
+    const parts = rawText
+        .split(",")
+        .map((part) => part.trim())
+        .filter((part) => part.length > 0);
+    if (parts.length === 0) {
+        throw new Error("Enter at least one number.");
     }
-    return text.split(",").map((part) => Number(part));
-};
-const formatResult = (result) => {
+    const numbers = parts.map((part) => {
+        const value = Number(part);
+        if (Number.isNaN(value)) {
+            throw new Error(`"${part}" is not a valid number.`);
+        }
+        return value;
+    });
+    return numbers.length === 1 ? numbers[0] : numbers;
+}
+function formatResult(result) {
     if (Array.isArray(result)) {
         return result.map((value) => value.toFixed(2)).join(", ");
     }
     return result.toFixed(2);
-};
-// PART 3 — Weight: kilograms to pounds
-const weightKgInput = document.getElementById("weight-kg-input");
-const weightKgButton = document.getElementById("weight-kg-button");
-const weightKgOutput = document.getElementById("weight-kg-output");
-const convertKgToLb = createConverter("kg", "lb");
-const handleKgToLb = () => {
-    const kilograms = parseInput(weightKgInput.value);
-    const pounds = convertKgToLb(kilograms);
-    weightKgOutput.value = formatResult(pounds);
-};
-weightKgButton.addEventListener("click", handleKgToLb);
-// PART 4 — Weight: pounds to kilograms
-const weightLbInput = document.getElementById("weight-lb-input");
-const weightLbButton = document.getElementById("weight-lb-button");
-const weightLbOutput = document.getElementById("weight-lb-output");
-const convertLbToKg = createConverter("lb", "kg");
-const handleLbToKg = () => {
-    const pounds = parseInput(weightLbInput.value);
-    const kilograms = convertLbToKg(pounds);
-    weightLbOutput.value = formatResult(kilograms);
-};
-weightLbButton.addEventListener("click", handleLbToKg);
-// PART 5 — Distance: kilometres to miles
-const distanceKmInput = document.getElementById("distance-km-input");
-const distanceKmButton = document.getElementById("distance-km-button");
-const distanceKmOutput = document.getElementById("distance-km-output");
-const convertKmToMi = createConverter("km", "mi");
-const handleKmToMi = () => {
-    const kilometres = parseInput(distanceKmInput.value);
-    const miles = convertKmToMi(kilometres);
-    distanceKmOutput.value = formatResult(miles);
-};
-distanceKmButton.addEventListener("click", handleKmToMi);
-// PART 6 — Distance: miles to kilometres
-const distanceMiInput = document.getElementById("distance-mi-input");
-const distanceMiButton = document.getElementById("distance-mi-button");
-const distanceMiOutput = document.getElementById("distance-mi-output");
-const convertMiToKm = createConverter("mi", "km");
-const handleMiToKm = () => {
-    const miles = parseInput(distanceMiInput.value);
-    const kilometres = convertMiToKm(miles);
-    distanceMiOutput.value = formatResult(kilometres);
-};
-distanceMiButton.addEventListener("click", handleMiToKm);
-// PART 7 — Temperature: Celsius to Fahrenheit
-const temperatureCInput = document.getElementById("temperature-c-input");
-const temperatureCButton = document.getElementById("temperature-c-button");
-const temperatureCOutput = document.getElementById("temperature-c-output");
-const convertCToF = createConverter("c", "f");
-const handleCToF = () => {
-    const celsius = parseInput(temperatureCInput.value);
-    const fahrenheit = convertCToF(celsius);
-    temperatureCOutput.value = formatResult(fahrenheit);
-};
-temperatureCButton.addEventListener("click", handleCToF);
-// PART 8 — Temperature: Fahrenheit to Celsius
-const temperatureFInput = document.getElementById("temperature-f-input");
-const temperatureFButton = document.getElementById("temperature-f-button");
-const temperatureFOutput = document.getElementById("temperature-f-output");
-const convertFToC = createConverter("f", "c");
-const handleFToC = () => {
-    const fahrenheit = parseInput(temperatureFInput.value);
-    const celsius = convertFToC(fahrenheit);
-    temperatureFOutput.value = formatResult(celsius);
-};
-temperatureFButton.addEventListener("click", handleFToC);
+}
+// 5. Generic form wiring
+function wireConversionForm(inputId, buttonId, resultId, converter) {
+    const inputEl = document.getElementById(inputId);
+    const buttonEl = document.getElementById(buttonId);
+    const resultEl = document.getElementById(resultId);
+    const handleConvert = () => {
+        try {
+            const parsedInput = parseInputValue(inputEl.value);
+            const result = converter(parsedInput);
+            resultEl.textContent = formatResult(result);
+            resultEl.classList.remove("text-red-600");
+        }
+        catch (error) {
+            resultEl.textContent = error.message;
+            resultEl.classList.add("text-red-600");
+        }
+    };
+    buttonEl.addEventListener("click", handleConvert);
+}
+// 6a.Weight tab: kg -> lb and lb -> kg
+wireConversionForm("weight-kg-input", "weight-kg-button", "weight-kg-result", convertKgToLb);
+wireConversionForm("weight-lb-input", "weight-lb-button", "weight-lb-result", convertLbToKg);
+// 6b.Distance tab: km -> mi and mi -> km
+wireConversionForm("distance-km-input", "distance-km-button", "distance-km-result", convertKmToMi);
+wireConversionForm("distance-mi-input", "distance-mi-button", "distance-mi-result", convertMiToKm);
+// 6c. Temperature tab: C -> F and F -> C
+wireConversionForm("temperature-c-input", "temperature-c-button", "temperature-c-result", convertCToF);
+wireConversionForm("temperature-f-input", "temperature-f-button", "temperature-f-result", convertFToC);
+// 7. Tab switching
+function wireTabs() {
+    const tabButtons = document.querySelectorAll("[data-tab-target]");
+    const tabPanels = document.querySelectorAll("[data-tab-panel]");
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const targetId = button.getAttribute("data-tab-target");
+            tabPanels.forEach((panel) => {
+                panel.classList.toggle("hidden", panel.getAttribute("data-tab-panel") !== targetId);
+            });
+            tabButtons.forEach((btn) => {
+                btn.classList.remove("border-blue-600", "text-slate-900");
+                btn.classList.add("border-transparent", "text-slate-500");
+            });
+            button.classList.add("border-blue-600", "text-slate-900");
+            button.classList.remove("border-transparent", "text-slate-500");
+        });
+    });
+}
+wireTabs();
 //# sourceMappingURL=main.js.map
