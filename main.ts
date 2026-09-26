@@ -1,159 +1,141 @@
 /*
-  Student Name: Minyan Liu
-  Student ID: 000973198
-  Date: September 23, 2026
+Author: Iris Dunbar
 
-  Program: Metric / Imperial Unit Converter
-  Three cards: weight, distance, and temperature.
-  The top row of each card converts one way.
-  The bottom row converts the opposite way.
-  One higher-order function handles a single number or a list.
 
-  Inputs: one number or a comma-separated list.
-  Processing: createConverter returns a function that converts one value or an array.
-  Outputs: the converted number or list, with two decimal places.
+
 */
 
-// PART 1 — conversion formulas
+// Element constants for ease of use across program without re-writing constantly
+const weightButton = document.getElementById("weightTab") as HTMLButtonElement;
+const distanceButton = document.getElementById("distanceTab") as HTMLButtonElement;
+const temperatureButton = document.getElementById("temperatureTab") as HTMLButtonElement;
+
+const iToMTitle = document.getElementById("imperialToMetricTitle") as HTMLParagraphElement;
+const iToMLabelIn = document.getElementById("imperialToMetricLabelIn") as HTMLParagraphElement;
+const imperialInput = document.getElementById("imperialToMetricInput") as HTMLInputElement;
+const iToMButton = document.getElementById("imperialToMetricButton") as HTMLButtonElement;
+const iToMLabelOut = document.getElementById("imperialToMetricLabelOut") as HTMLParagraphElement;
+const metricOutput = document.getElementById("imperialToMetricOutput") as HTMLOutputElement;
+
+const mToITitle = document.getElementById("metricToImperialTitle") as HTMLParagraphElement;
+const mToILabelIn = document.getElementById("metricToImperialLabelIn") as HTMLParagraphElement;
+const metricInput = document.getElementById("metricToImperialInput") as HTMLInputElement;
+const mToIButton = document.getElementById("metricToImperialButton") as HTMLButtonElement;
+const mToILabelOut = document.getElementById("metricToImperialLabelOut") as HTMLParagraphElement;
+const imperialOutput = document.getElementById("metricToImperialOutput") as HTMLOutputElement;
+
+//Equation constants for use in calculations
 const kilogramsToPounds = (kilograms: number): number => kilograms * 2.20462;
 const poundsToKilograms = (pounds: number): number => pounds / 2.20462;
-const kilometresToMiles = (kilometres: number): number => kilometres / 1.609344;
-const milesToKilometres = (miles: number): number => miles * 1.609344;
+const kilometersToMiles = (kilometres: number): number => kilometres / 1.609344;
+const milesToKilometers = (miles: number): number => miles * 1.609344;
 const celsiusToFahrenheit = (celsius: number): number => celsius * 1.8 + 32;
 const fahrenheitToCelsius = (fahrenheit: number): number => (fahrenheit - 32) / 1.8;
 
-// Pick one formula from the two units, then convert one number.
-const convertOneNumber = (fromUnit: string, toUnit: string, value: number): number => {
-  if (fromUnit === "kg" && toUnit === "lb") {
-    return kilogramsToPounds(value);
-  }
-  if (fromUnit === "lb" && toUnit === "kg") {
-    return poundsToKilograms(value);
-  }
-  if (fromUnit === "km" && toUnit === "mi") {
-    return kilometresToMiles(value);
-  }
-  if (fromUnit === "mi" && toUnit === "km") {
-    return milesToKilometres(value);
-  }
-  if (fromUnit === "c" && toUnit === "f") {
-    return celsiusToFahrenheit(value);
-  }
-  if (fromUnit === "f" && toUnit === "c") {
-    return fahrenheitToCelsius(value);
-  }
+// Sets initial unit values to be changed later and used in calculations
+let currentImpToMetricUnits = { from: "lb", to: "kg" };
+let currentMetricToImpUnits = { from: "kg", to: "lb" };
+
+const converter = (fromUnit: string, toUnit: string, value: number): number => {
+  if (fromUnit === "kg" && toUnit === "lb") return kilogramsToPounds(value);
+  if (fromUnit === "lb" && toUnit === "kg") return poundsToKilograms(value);
+  if (fromUnit === "km" && toUnit === "mi") return kilometersToMiles(value);
+  if (fromUnit === "mi" && toUnit === "km") return milesToKilometers(value);
+  if (fromUnit === "c" && toUnit === "f") return celsiusToFahrenheit(value);
+  if (fromUnit === "f" && toUnit === "c") return fahrenheitToCelsius(value);
   return value;
 };
 
-/*
-  PART 2 — higher-order function 
-  Two parameters: the unit to convert from, and the unit to convert to.
-  It returns an arrow function.
-  That arrow function accepts one number or an array of numbers.
-*/
 const createConverter = (fromUnit: string, toUnit: string) => {
   return (input: number | number[]): number | number[] => {
     if (Array.isArray(input)) {
-      return input.map((value: number): number => convertOneNumber(fromUnit, toUnit, value));
+      return input.map((value: number): number => converter(fromUnit, toUnit, value));
     }
-    return convertOneNumber(fromUnit, toUnit, input);
+    return converter(fromUnit, toUnit, input);
   };
 };
 
-const parseInput = (text: string): number | number[] => {
-  if (text.includes(",") === false) {
-    return Number(text);
-  }
-  return text.split(",").map((part: string): number => Number(part));
+const parseInput = (input: string): number | number[] => {
+  if (!input.includes(",")) return Number(input);
+  return input.split(",").map((arrayValue: string): number => Number(arrayValue.trim()));
 };
 
 const formatResult = (result: number | number[]): string => {
   if (Array.isArray(result)) {
-    return result.map((value: number): string => value.toFixed(2)).join(", ");
+    return result.map((value: number): string => value.toFixed(1)).join(", ");
   }
   return result.toFixed(2);
 };
 
-// PART 3 — Weight: kilograms to pounds
-const weightKgInput = document.getElementById("weight-kg-input") as HTMLInputElement;
-const weightKgButton = document.getElementById("weight-kg-button") as HTMLButtonElement;
-const weightKgOutput = document.getElementById("weight-kg-output") as HTMLInputElement;
-const convertKgToLb = createConverter("kg", "lb");
+const weightTab = (): void => {
+  imperialInput.value = "";
+  metricInput.value = "";
+  imperialOutput.value = "";
+  metricOutput.value = "";
 
-const handleKgToLb = (): void => {
-  const kilograms = parseInput(weightKgInput.value);
-  const pounds = convertKgToLb(kilograms);
-  weightKgOutput.value = formatResult(pounds);
+  iToMTitle.textContent = "Pounds to Kilograms converter";
+  iToMLabelIn.textContent = "Pounds"; 
+  iToMLabelOut.textContent = "Kilograms";
+  mToITitle.textContent = "Kilograms to Pounds converter";
+  mToILabelIn.textContent = "Kilograms";
+  mToILabelOut.textContent = "Pounds";
+
+  currentImpToMetricUnits = { from: "lb", to: "kg" };
+  currentMetricToImpUnits = { from: "kg", to: "lb" };
 };
 
-weightKgButton.addEventListener("click", handleKgToLb);
+const distanceTab = (): void => {
+  imperialInput.value = "";
+  metricInput.value = "";
+  imperialOutput.value = "";
+  metricOutput.value = "";
 
-// PART 4 — Weight: pounds to kilograms
-const weightLbInput = document.getElementById("weight-lb-input") as HTMLInputElement;
-const weightLbButton = document.getElementById("weight-lb-button") as HTMLButtonElement;
-const weightLbOutput = document.getElementById("weight-lb-output") as HTMLInputElement;
-const convertLbToKg = createConverter("lb", "kg");
+  iToMTitle.textContent = "Miles to Kilometers converter";
+  iToMLabelIn.textContent = "Miles"; 
+  iToMLabelOut.textContent = "Kilometers";
+  mToITitle.textContent = "Kilometers to Miles converter";
+  mToILabelIn.textContent = "Kilometers";
+  mToILabelOut.textContent = "Miles";
 
-const handleLbToKg = (): void => {
-  const pounds = parseInput(weightLbInput.value);
-  const kilograms = convertLbToKg(pounds);
-  weightLbOutput.value = formatResult(kilograms);
+  currentImpToMetricUnits = { from: "mi", to: "km" };
+  currentMetricToImpUnits = { from: "km", to: "mi" };
 };
 
-weightLbButton.addEventListener("click", handleLbToKg);
+const temperatureTab = (): void => {
+  imperialInput.value = "";
+  metricInput.value = "";
+  imperialOutput.value = "";
+  metricOutput.value = "";
 
-// PART 5 — Distance: kilometres to miles
-const distanceKmInput = document.getElementById("distance-km-input") as HTMLInputElement;
-const distanceKmButton = document.getElementById("distance-km-button") as HTMLButtonElement;
-const distanceKmOutput = document.getElementById("distance-km-output") as HTMLInputElement;
-const convertKmToMi = createConverter("km", "mi");
+  iToMTitle.textContent = "Fahrenheit to Celsius converter";
+  iToMLabelIn.textContent = "Fahrenheit"; 
+  iToMLabelOut.textContent = "Celsius";
+  mToITitle.textContent = "Celsius to Fahrenheit converter";
+  mToILabelIn.textContent = "Celsius";
+  mToILabelOut.textContent = "Fahrenheit";
 
-const handleKmToMi = (): void => {
-  const kilometres = parseInput(distanceKmInput.value);
-  const miles = convertKmToMi(kilometres);
-  distanceKmOutput.value = formatResult(miles);
+  currentImpToMetricUnits = { from: "f", to: "c" };
+  currentMetricToImpUnits = { from: "c", to: "f" };
 };
 
-distanceKmButton.addEventListener("click", handleKmToMi);
+weightButton.addEventListener('click', weightTab);
+distanceButton.addEventListener('click', distanceTab);
+temperatureButton.addEventListener('click', temperatureTab);
 
-// PART 6 — Distance: miles to kilometres
-const distanceMiInput = document.getElementById("distance-mi-input") as HTMLInputElement;
-const distanceMiButton = document.getElementById("distance-mi-button") as HTMLButtonElement;
-const distanceMiOutput = document.getElementById("distance-mi-output") as HTMLInputElement;
-const convertMiToKm = createConverter("mi", "km");
-
-const handleMiToKm = (): void => {
-  const miles = parseInput(distanceMiInput.value);
-  const kilometres = convertMiToKm(miles);
-  distanceMiOutput.value = formatResult(kilometres);
+const ImpToMetricConverter = (): void => {
+  const imperial = parseInput(imperialInput.value);
+  const metric = createConverter(currentImpToMetricUnits.from, currentImpToMetricUnits.to)(imperial);
+  metricOutput.value = formatResult(metric);
 };
 
-distanceMiButton.addEventListener("click", handleMiToKm);
-
-// PART 7 — Temperature: Celsius to Fahrenheit
-const temperatureCInput = document.getElementById("temperature-c-input") as HTMLInputElement;
-const temperatureCButton = document.getElementById("temperature-c-button") as HTMLButtonElement;
-const temperatureCOutput = document.getElementById("temperature-c-output") as HTMLInputElement;
-const convertCToF = createConverter("c", "f");
-
-const handleCToF = (): void => {
-  const celsius = parseInput(temperatureCInput.value);
-  const fahrenheit = convertCToF(celsius);
-  temperatureCOutput.value = formatResult(fahrenheit);
+const MetricToImpConverter = (): void => {
+  const metric = parseInput(metricInput.value);
+  const imperial = createConverter(currentMetricToImpUnits.from, currentMetricToImpUnits.to)(metric);
+  imperialOutput.value = formatResult(imperial); 
 };
 
-temperatureCButton.addEventListener("click", handleCToF);
+iToMButton.addEventListener("click", ImpToMetricConverter);
+mToIButton.addEventListener("click", MetricToImpConverter);
 
-// PART 8 — Temperature: Fahrenheit to Celsius
-const temperatureFInput = document.getElementById("temperature-f-input") as HTMLInputElement;
-const temperatureFButton = document.getElementById("temperature-f-button") as HTMLButtonElement;
-const temperatureFOutput = document.getElementById("temperature-f-output") as HTMLInputElement;
-const convertFToC = createConverter("f", "c");
-
-const handleFToC = (): void => {
-  const fahrenheit = parseInput(temperatureFInput.value);
-  const celsius = convertFToC(fahrenheit);
-  temperatureFOutput.value = formatResult(celsius);
-};
-
-temperatureFButton.addEventListener("click", handleFToC);
+// Initializes page with weight tab
+weightTab();

@@ -1,126 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+ <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Metric / Imperial Converter</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   </head>
-  <body class="bg-slate-100 min-h-screen">
-    <header class="bg-white border-b border-slate-200">
-      <div class="max-w-5xl mx-auto px-6 py-4">
-        <h1 class="text-4xl font-bold text-slate-900">Unit Converter</h1>
-        <p class="text-sm text-slate-500 mt-1">Metric and Imperial Unit Conversion</p>
+  <body >
+    <header >
+      <div >
+        <h1 >Unit Converter</h1>
+        <p >Metric and Imperial Unit Conversion</p>
+      </div>
+      <div>
+        <button type="button" id="weightTab">Weight</button>
+        <button type="button" id="distanceTab">Distance</button>
+        <button type="button" id="temperatureTab">Temperature</button>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-6 pt-8 pb-12">
+    <main >
       <section>
-        <h2 class="text-2xl font-bold text-slate-900">Weight</h2>
-        <p class="text-slate-600 mt-1">Type one number or a comma-separated list, then press Convert.</p>
+        <h2 ></h2>
+        <p >Type one number or a comma-separated list, then press Convert.</p>
 
-        <div class="bg-white rounded-2xl shadow-md p-6 mt-5">
-          <h3 class="text-xl font-bold text-slate-900">Kilograms to pounds</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="weight-kg-input" class="block text-sm font-medium text-slate-700 mb-2">Kilograms</label>
-              <input id="weight-kg-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-blue-500 focus:outline-none" />
+        <div >
+          <h3 id="imperialToMetricTitle"></h3>
+          <div >
+            <div >
+              <label id="imperialToMetricLabelIn" for="imperialToMetricInput" ></label>
+              <input id="imperialToMetricInput" type="text" value="" />
             </div>
-            <button id="weight-kg-button" type="button" class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Convert</button>
+            <button id="imperialToMetricButton" type="button" >Convert</button>
             <div class="w-full">
-              <label for="weight-kg-output" class="block text-sm font-medium text-slate-700 mb-2">Pounds</label>
-              <input id="weight-kg-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-blue-600 font-bold" />
+              <label id="imperialToMetricLabelOut" for="imperialToMetricOutput" ></label>
+              <input id="imperialToMetricOutput" type="text" readonly value="" />
             </div>
           </div>
 
-          <h3 class="text-xl font-bold text-slate-900 mt-8">Pounds to kilograms</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="weight-lb-input" class="block text-sm font-medium text-slate-700 mb-2">Pounds</label>
-              <input id="weight-lb-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-blue-500 focus:outline-none" />
+          <h3 id="metricToImperialTitle"></h3>
+          <div >
+            <div >
+              <label id="metricToImperialLabelIn" for="metricToImperialInput" ></label>
+              <input id="metricToImperialInput" type="text" value="" />
             </div>
-            <button id="weight-lb-button" type="button" class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Convert</button>
-            <div class="w-full">
-              <label for="weight-lb-output" class="block text-sm font-medium text-slate-700 mb-2">Kilograms</label>
-              <input id="weight-lb-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-blue-600 font-bold" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="mt-5">
-        <h2 class="text-2xl font-bold text-slate-900">Distance</h2>
-        <p class="text-slate-600 mt-1">Type one number or a comma-separated list, then press Convert.</p>
-
-        <div class="bg-white rounded-2xl shadow-md p-6 mt-5">
-          <h3 class="text-lg font-bold text-slate-900">Kilometres to miles</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="distance-km-input" class="block text-sm font-medium text-slate-700 mb-2">Kilometres</label>
-              <input id="distance-km-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-emerald-500 focus:outline-none" />
-            </div>
-            <button id="distance-km-button" type="button" class="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-700">Convert</button>
-            <div class="w-full">
-              <label for="distance-km-output" class="block text-sm font-medium text-slate-700 mb-2">Miles</label>
-              <input id="distance-km-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-emerald-600 font-bold" />
-            </div>
-          </div>
-
-          <h3 class="text-lg font-bold text-slate-900 mt-8">Miles to kilometres</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="distance-mi-input" class="block text-sm font-medium text-slate-700 mb-2">Miles</label>
-              <input id="distance-mi-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-emerald-500 focus:outline-none" />
-            </div>
-            <button id="distance-mi-button" type="button" class="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-700">Convert</button>
-            <div class="w-full">
-              <label for="distance-mi-output" class="block text-sm font-medium text-slate-700 mb-2">Kilometres</label>
-              <input id="distance-mi-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-emerald-600 font-bold" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="mt-5">
-        <h2 class="text-2xl font-bold text-slate-900">Temperature</h2>
-        <p class="text-slate-600 mt-1">Type one number or a comma-separated list, then press Convert.</p>
-
-        <div class="bg-white rounded-2xl shadow-md p-6 mt-5">
-          <h3 class="text-lg font-bold text-slate-900">Celsius to Fahrenheit</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="temperature-c-input" class="block text-sm font-medium text-slate-700 mb-2">Celsius</label>
-              <input id="temperature-c-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-violet-500 focus:outline-none" />
-            </div>
-            <button id="temperature-c-button" type="button" class="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700">Convert</button>
-            <div class="w-full">
-              <label for="temperature-c-output" class="block text-sm font-medium text-slate-700 mb-2">Fahrenheit</label>
-              <input id="temperature-c-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-violet-600 font-bold" />
-            </div>
-          </div>
-
-          <h3 class="text-lg font-bold text-slate-900 mt-8">Fahrenheit to Celsius</h3>
-          <div class="flex flex-col md:flex-row md:items-end gap-4 mt-3">
-            <div class="w-full">
-              <label for="temperature-f-input" class="block text-sm font-medium text-slate-700 mb-2">Fahrenheit</label>
-              <input id="temperature-f-input" type="text" value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-violet-500 focus:outline-none" />
-            </div>
-            <button id="temperature-f-button" type="button" class="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700">Convert</button>
-            <div class="w-full">
-              <label for="temperature-f-output" class="block text-sm font-medium text-slate-700 mb-2">Celsius</label>
-              <input id="temperature-f-output" type="text" readonly value="" class="w-full rounded-lg border border-slate-300 px-4 py-2 bg-slate-50 text-violet-600 font-bold" />
+            <button id="metricToImperialButton" type="button" >Convert</button>
+            <div >
+              <label id="metricToImperialLabelOut" for="metricToImperialOutput" ></label>
+              <input id="metricToImperialOutput" type="text" readonly value=""/>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="bg-white border-t border-slate-200">
-      <div class="max-w-5xl mx-auto px-6 py-6 text-center">
-        <p class="text-sm text-slate-500">CPRG 306 Assignment 1 · Tailwind CSS and TypeScript</p>
+    <footer >
+      <div >
+        <p class="text-sm text-slate-500">CPRG 306 Assignment 1 - Tailwind CSS and TypeScript</p>
       </div>
     </footer>
 
     <script src="./main.js"></script>
-  </body>
 </html>
