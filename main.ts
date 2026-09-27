@@ -4,9 +4,8 @@
   Date: September 23, 2026
 
   Program: Metric / Imperial Unit Converter
-  Three cards: weight, distance, and temperature.
-  The top row of each card converts one way.
-  The bottom row converts the opposite way.
+  Three navbar tabs: weight, distance, and temperature.
+  Each tab has both conversion directions.
   One higher-order function handles a single number or a list.
 
   Inputs: one number or a comma-separated list.
@@ -157,3 +156,48 @@ const handleFToC = (): void => {
 };
 
 temperatureFButton.addEventListener("click", handleFToC);
+
+// Navbar tabs: show one converter panel at a time
+const tabWeight = document.getElementById("tab-weight") as HTMLButtonElement;
+const tabDistance = document.getElementById("tab-distance") as HTMLButtonElement;
+const tabTemperature = document.getElementById("tab-temperature") as HTMLButtonElement;
+const panelWeight = document.getElementById("panel-weight") as HTMLElement;
+const panelDistance = document.getElementById("panel-distance") as HTMLElement;
+const panelTemperature = document.getElementById("panel-temperature") as HTMLElement;
+
+const inactiveTab = "rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700";
+const activeWeightTab = "rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white";
+const activeDistanceTab = "rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white";
+const activeTemperatureTab = "rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white";
+
+const showPanel = (name: string): void => {
+  panelWeight.classList.add("hidden");
+  panelDistance.classList.add("hidden");
+  panelTemperature.classList.add("hidden");
+  tabWeight.className = inactiveTab;
+  tabDistance.className = inactiveTab;
+  tabTemperature.className = inactiveTab;
+
+  if (name === "weight") {
+    panelWeight.classList.remove("hidden");
+    tabWeight.className = activeWeightTab;
+  }
+  if (name === "distance") {
+    panelDistance.classList.remove("hidden");
+    tabDistance.className = activeDistanceTab;
+  }
+  if (name === "temperature") {
+    panelTemperature.classList.remove("hidden");
+    tabTemperature.className = activeTemperatureTab;
+  }
+};
+
+tabWeight.addEventListener("click", (): void => {
+  showPanel("weight");
+});
+tabDistance.addEventListener("click", (): void => {
+  showPanel("distance");
+});
+tabTemperature.addEventListener("click", (): void => {
+  showPanel("temperature");
+});
