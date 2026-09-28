@@ -136,4 +136,42 @@ const handleFToC = () => {
     temperatureFOutput.value = formatResult(celsius);
 };
 temperatureFButton.addEventListener("click", handleFToC);
-//# sourceMappingURL=main.js.map
+const tabWeight = document.getElementById("tab-weight");
+const tabDistance = document.getElementById("tab-distance");
+const tabTemperature = document.getElementById("tab-temperature");
+const panelWeight = document.getElementById("panel-weight");
+const panelDistance = document.getElementById("panel-distance");
+const panelTemperature = document.getElementById("panel-temperature");
+const inactiveTab = "rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700";
+const activeWeightTab = "rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white";
+const activeDistanceTab = "rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white";
+const activeTemperatureTab = "rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white";
+const showPanel = (name) => {
+    panelWeight.classList.add("hidden");
+    panelDistance.classList.add("hidden");
+    panelTemperature.classList.add("hidden");
+    tabWeight.className = inactiveTab;
+    tabDistance.className = inactiveTab;
+    tabTemperature.className = inactiveTab;
+    if (name === "weight") {
+        panelWeight.classList.remove("hidden");
+        tabWeight.className = activeWeightTab;
+    }
+    if (name === "distance") {
+        panelDistance.classList.remove("hidden");
+        tabDistance.className = activeDistanceTab;
+    }
+    if (name === "temperature") {
+        panelTemperature.classList.remove("hidden");
+        tabTemperature.className = activeTemperatureTab;
+    }
+};
+tabWeight.addEventListener("click", () => {
+    showPanel("weight");
+});
+tabDistance.addEventListener("click", () => {
+    showPanel("distance");
+});
+tabTemperature.addEventListener("click", () => {
+    showPanel("temperature");
+});
